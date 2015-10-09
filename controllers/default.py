@@ -54,7 +54,8 @@ def index():
     #menu = [{}]
     response.menu = [adminbutton,lingualeobutton]
     response.logo = A('LinguaLeo Words Adder', _HREF=URL('index'), _CLASS='brand')
-    textarea = TEXTAREA(_name='textarea', _ROWS=20)
+    #textarea = TEXTAREA(_name='textarea', _ROWS=20)
+    textarea = TEXTAREA(_name='textarea')
     okbutton = INPUT(_VALUE='Get translations', _TYPE='submit')
     form = FORM("Insert words:",textarea,okbutton)
     words = []
