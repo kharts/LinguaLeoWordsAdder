@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-
-#########################################################################
-## This scaffolding model makes your app work on Google App Engine too
-## File is released under public domain and you can use without limitations
-#########################################################################
+# models/db.py - default model of the application
+#
+# Copyright 2015 kharts (https://github.com/kharts)
+#
+# This software may be used and distributed according to the terms of the
+# GNU General Public License version 2 or any later version.
 
 ## if SSL/HTTPS is properly configured and you want all HTTP requests to
 ## be redirected to HTTPS, uncomment the line below:
