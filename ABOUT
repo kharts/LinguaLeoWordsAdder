@@ -1,2 +1,17 @@
-Write something about this app.
-Developed with web2py.
+LinguaLeoWordsAdder
+
+Application for batch adding multiple words to the LinguaLeo dictionary
+LinguaLeo (http://lingualeo.com) - is a service for English learning
+
+Installation
+
+1. Download and install web2py: http://www.web2py.com/init/default/download
+2. Copy LinguaLeoWordsAdder folder into /applications/ forder of web2py root
+3. Start web2py server
+4. Enjoy!
+
+Usage:
+
+- Insert words into the 'Insert words' text area
+- Press 'Get translations' button
+- Select one of the proposed translations
