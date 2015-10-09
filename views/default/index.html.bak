@@ -1,0 +1,36 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+<table>
+    <tr>
+        <td>
+            {{=form}}
+        </td>
+        <td>
+            <table class="table table-striped">
+                {{import urllib}}
+                {{for word_translations in translations:}}
+                <tr>
+                    <td>{{=word_translations['word']}}</td>
+                    <td>
+                        {{for translation in word_translations['translations']:}}
+                            {{word=word_translations['word']}}
+                            {{translation_value=translation['value']}}
+                            {{translation_encoded = []}}
+                            {{for char in translation_value:}}
+                                {{translation_encoded.append(ord(char))}}
+                            {{pass}}
+                            {{url_vars=dict(word=word,translation=translation_encoded)}}
+                            {{url=URL('add_word_translation', vars=url_vars)}}
+                            {{button_class='btn'}}
+                            {{if translation['is_user']:}}
+                                {{button_class = "btn btn-info"}}
+                            {{pass}}
+                            {{=A(translation_value, callback=url, _CLASS=button_class)}}
+                        {{pass}}
+                    </td>
+                </tr>
+                {{pass}}
+            </table>
+        </td>
+    </tr>
+</table>
