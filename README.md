@@ -6,6 +6,7 @@ Application for batch adding multiple words to the LinguaLeo dictionary
 2. Copy LinguaLeoWordsAdder folder into /applications/ forder of web2py root  
 3. Start web2py server  
 4. Enjoy\!  
+  
 ## Usage  
  * Insert words into the 'Insert words' text area  
  * Press 'Get translations' button  
