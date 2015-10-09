@@ -7,6 +7,6 @@ Application for batch adding multiple words to the LinguaLeo dictionary
 3. Start web2py server  
 4. Enjoy!  
 ## Usage  
- * Insert words into the 'Insert words' text area 
+ * Insert words into the 'Insert words' text area  
  * Press 'Get translations' button  
  * Select one of the proposed translations  
