@@ -6,10 +6,13 @@
 # This software may be used and distributed according to the terms of the
 # GNU General Public License version 2 or any later version.
 
-import urllib, urllib2, json
+import urllib
+import urllib2
+import json
 from cookielib import CookieJar
 
-class Lingualeo:
+
+class Lingualeo():
     def __init__(self, email="", password=""):
         self.email = email
         self.password = password
@@ -18,11 +21,12 @@ class Lingualeo:
     def auth(self):
         url = "https://api.lingualeo.com/api/login"
         values = {
-            "email" : self.email,
-            "password" : self.password
+            "email": self.email,
+            "password": self.password
         }
 
         return self.getContent(url, values)
+
     def getTranslates(self, word):
         url = "http://api.lingualeo.com/gettranslates?word=" + word
         return self.getContent(url, {})
@@ -30,10 +34,11 @@ class Lingualeo:
     def addWord(self, word, tword):
         url = "https://api.lingualeo.com/addword"
         values = {
-            "word" : word,
-            "tword" : tword
+            "word": word,
+            "tword": tword
         }
         return self.getContent(url, values)
+
     def getContent(self, url, values):
         data = urllib.urlencode(values)
 
@@ -51,6 +56,7 @@ class Lingualeo:
         res = self.auth()
         return (u"user" in res)
 
+
 def index():
     """
     Prepares data for start (index) page
@@ -62,15 +68,14 @@ def index():
     if not LL.check_auth():
         redirect(URL("login"))
     prepare_header()
-    #textarea = TEXTAREA(_name='textarea', _ROWS=20)
     textarea = TEXTAREA(_name='textarea')
     okbutton = INPUT(_VALUE='Get translations', _TYPE='submit')
-    form = FORM("Insert words:",textarea,okbutton)
+    form = FORM("Insert words:", textarea, okbutton)
     words = []
     translations = []
     translations2 = []
-    if form.accepts(request,session, keepvalues=True):
-        words=getwords(form.vars.textarea)
+    if form.accepts(request, session, keepvalues=True):
+        words = getwords(form.vars.textarea)
         translations = gettranslations2(words)
     return dict(form=form, words=words, translations=translations)
 
@@ -95,7 +100,6 @@ def login():
                   TR(TD("Password"), TD(password_input)),
                   TR(TD(""), TD(submit_button)))
     form = FORM(table, _METHOD="POST")
-    #form = auth()
     if form.accepts(request, session):
         LL = Lingualeo(form.vars.email,
                        form.vars.password)
@@ -116,30 +120,30 @@ def prepare_header():
 
     response.title = None
     adminlabel = SPAN('Admin', _CLASS='highlighted')
-    adminurl   = URL('admin','default','design', args=['LinguaLeoWordsAdder'])
-    adminbutton = (adminlabel,False,adminurl,[])
+    adminurl = URL('admin', 'default', 'design', args=['LinguaLeoWordsAdder'])
+    adminbutton = (adminlabel, False, adminurl, [])
     lingualeolabel = 'LinguaLeo'
-    lingualeourl  = 'http://lingualeo.com'
+    lingualeourl = 'http://lingualeo.com'
     lingualeobutton = (lingualeolabel, False, lingualeourl, [])
-    #adminlink = A(SPAN('Admin', _CLASS='highlighted'), _HREF=URL('admin','default','design', args=['LinguaLeoWordsAdder']))
-    #menu = [{}]
-    response.menu = [adminbutton,lingualeobutton]
-    response.logo = A('LinguaLeo Words Adder', _HREF=URL('index'), _CLASS='brand')
+    response.menu = [adminbutton, lingualeobutton]
+    response.logo = A('LinguaLeo Words Adder',
+                      _HREF=URL('index'),
+                      _CLASS='brand')
 
 
 def getwords(text):
     letters = "ABCDEFGHIJKLMNOPQRSTUVWZYZabcdefghijklmnopqrstuvwxyz-"
     words = []
-    word  = ""
+    word = ""
     for char in text:
         if (char in letters):
             word = word + char
         else:
-            if (len(word)>0):
+            if len(word) > 0:
                 if (not (word in words)):
                     words.append(word.lower())
                 word = ""
-    if (len(word)>0 and (not (word in words))):
+    if len(word) > 0 and (not (word in words)):
         words.append(word.lower())
     return words
 
@@ -149,8 +153,8 @@ def gettranslations(words):
     from urllib2 import urlopen
     import json
     for word in words:
-        #response.flash = 'Translation word ' + word
-        url = "http://lingualeo.com/ru/userdict3/getTranslations?word_value=" + word
+        url = "http://lingualeo.com/ru/userdict3/" \
+              "getTranslations?word_value=" + word
         data = urlopen(url)
         fulltranslation = json.load(data)
         word_translations = fulltranslation['userdict3']['translations']
@@ -159,12 +163,12 @@ def gettranslations(words):
         translations.append(translation)
     return translations
 
+
 def gettranslations2(words):
     translations = []
-    #email = ""
-    #password = ""
-    LL = Lingualeo()
-    #LL.auth()
+    LL = Lingualeo(session.email,
+                   session.password)
+    LL.auth()
     for word in words:
         result = LL.getTranslates(word)
         word_translations = result['translate']
@@ -173,11 +177,14 @@ def gettranslations2(words):
         translations.append(translation)
     return translations
 
+
 def translation_key(translation):
     return -translation['translate_votes']
 
+
 def translation_key2(translation):
     return -translation['votes']
+
 
 def add_word_translation():
     LL = Lingualeo(session.email,
@@ -189,11 +196,14 @@ def add_word_translation():
         translation = translation + unichr(int(charcode))
     translation = translation.encode("utf-8")
     result = LL.addWord(word, translation)
-    if result['added_translate_count']>0:
-        response.flash = "The word " + word + " has been successfully added to the dictionary"
+    if result['added_translate_count'] > 0:
+        response.flash = "The word " + word + \
+                         " has been successfully added to the dictionary"
         id = request.vars.id
-        response.js = "document.getElementById('" + id + "').className = 'btn btn-info';"
-    
+        response.js = "document.getElementById('" + id + \
+                      "').className = 'btn btn-info';"
+
+
 def user():
     """
     exposes:
@@ -231,7 +241,7 @@ def call():
     return service()
 
 
-@auth.requires_login() 
+@auth.requires_login()
 def api():
     """
     this is example of API with access control
@@ -239,6 +249,6 @@ def api():
     """
     from gluon.contrib.hypermedia import Collection
     rules = {
-        '<tablename>': {'GET':{},'POST':{},'PUT':{},'DELETE':{}},
+        '<tablename>': {'GET': {}, 'POST': {}, 'PUT': {}, 'DELETE': {}}
         }
-    return Collection(db).process(request,response,rules)
+    return Collection(db).process(request, response, rules)
