@@ -10,7 +10,7 @@ import urllib, urllib2, json
 from cookielib import CookieJar
 
 class Lingualeo:
-    def __init__(self, email, password):
+    def __init__(self, email="", password=""):
         self.email = email
         self.password = password
         self.cj = CookieJar()
@@ -57,6 +57,10 @@ def index():
     :return: dictionary with data for start (index) page
     """
 
+    LL = Lingualeo(session.email,
+                   session.password)
+    if not LL.check_auth():
+        redirect(URL("login"))
     prepare_header()
     #textarea = TEXTAREA(_name='textarea', _ROWS=20)
     textarea = TEXTAREA(_name='textarea')
@@ -123,6 +127,23 @@ def prepare_header():
     response.logo = A('LinguaLeo Words Adder', _HREF=URL('index'), _CLASS='brand')
 
 
+def getwords(text):
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWZYZabcdefghijklmnopqrstuvwxyz-"
+    words = []
+    word  = ""
+    for char in text:
+        if (char in letters):
+            word = word + char
+        else:
+            if (len(word)>0):
+                if (not (word in words)):
+                    words.append(word.lower())
+                word = ""
+    if (len(word)>0 and (not (word in words))):
+        words.append(word.lower())
+    return words
+
+
 def gettranslations(words):
     translations = []
     from urllib2 import urlopen
@@ -140,10 +161,10 @@ def gettranslations(words):
 
 def gettranslations2(words):
     translations = []
-    email = ""
-    password = ""
-    LL = Lingualeo(email, password)
-    LL.auth()
+    #email = ""
+    #password = ""
+    LL = Lingualeo()
+    #LL.auth()
     for word in words:
         result = LL.getTranslates(word)
         word_translations = result['translate']
@@ -159,9 +180,8 @@ def translation_key2(translation):
     return -translation['votes']
 
 def add_word_translation():
-    email = ""
-    password = ""
-    LL = Lingualeo(email, password)
+    LL = Lingualeo(session.email,
+                   session.password)
     LL.auth()
     word = request.vars.word
     translation = ""
