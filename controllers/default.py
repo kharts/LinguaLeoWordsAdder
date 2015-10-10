@@ -42,18 +42,22 @@ class Lingualeo:
 
         return json.loads(req.read())
 
+    def check_auth(self):
+        """
+        Checks auth credentials
+        :return: True - if email/password is correct. False - otherwise
+        """
+
+        res = self.auth()
+        return (u"user" in res)
+
 def index():
-    response.title = None
-    adminlabel = SPAN('Admin', _CLASS='highlighted')
-    adminurl   = URL('admin','default','design', args=['LinguaLeoWordsAdder'])
-    adminbutton = (adminlabel,False,adminurl,[])
-    lingualeolabel = 'LinguaLeo'
-    lingualeourl  = 'http://lingualeo.com'
-    lingualeobutton = (lingualeolabel, False, lingualeourl, [])
-    #adminlink = A(SPAN('Admin', _CLASS='highlighted'), _HREF=URL('admin','default','design', args=['LinguaLeoWordsAdder']))
-    #menu = [{}]
-    response.menu = [adminbutton,lingualeobutton]
-    response.logo = A('LinguaLeo Words Adder', _HREF=URL('index'), _CLASS='brand')
+    """
+    Prepares data for start (index) page
+    :return: dictionary with data for start (index) page
+    """
+
+    prepare_header()
     #textarea = TEXTAREA(_name='textarea', _ROWS=20)
     textarea = TEXTAREA(_name='textarea')
     okbutton = INPUT(_VALUE='Get translations', _TYPE='submit')
@@ -66,21 +70,58 @@ def index():
         translations = gettranslations2(words)
     return dict(form=form, words=words, translations=translations)
 
-def getwords(text):
-    letters = "ABCDEFGHIJKLMNOPQRSTUVWZYZabcdefghijklmnopqrstuvwxyz-"
-    words = []
-    word  = ""
-    for char in text:
-        if (char in letters):
-            word = word + char
+
+def login():
+    """
+    Prepares data for login page
+    :return: dictionary with data for login page
+    """
+
+    prepare_header()
+    form_title = B("Enter your email and password")
+    email_input = INPUT(_TYPE="text", _name="email", _ID="email")
+    br = BR()
+    password_input = INPUT(_TYPE="password",
+                           _name="password",
+                           _ID="password",
+                           _VALUE="")
+    submit_button = INPUT(_VALUE="Login", _TYPE="submit")
+    table = TABLE(TR(TD(form_title)),
+                  TR(TD("Email:"), TD(email_input)),
+                  TR(TD("Password"), TD(password_input)),
+                  TR(TD(""), TD(submit_button)))
+    form = FORM(table, _METHOD="POST")
+    #form = auth()
+    if form.accepts(request, session):
+        LL = Lingualeo(form.vars.email,
+                       form.vars.password)
+        if LL.check_auth():
+            session.email = form.vars.email
+            session.password = form.vars.password
+            redirect(URL("index"))
         else:
-            if (len(word)>0):
-                if (not (word in words)):
-                    words.append(word.lower())
-                word = ""
-    if (len(word)>0 and (not (word in words))):
-        words.append(word.lower())
-    return words
+            response.flash = "Email/password is incorrect"
+    return dict(form=form)
+
+
+def prepare_header():
+    """
+    Prepares header of page
+    :return: None
+    """
+
+    response.title = None
+    adminlabel = SPAN('Admin', _CLASS='highlighted')
+    adminurl   = URL('admin','default','design', args=['LinguaLeoWordsAdder'])
+    adminbutton = (adminlabel,False,adminurl,[])
+    lingualeolabel = 'LinguaLeo'
+    lingualeourl  = 'http://lingualeo.com'
+    lingualeobutton = (lingualeolabel, False, lingualeourl, [])
+    #adminlink = A(SPAN('Admin', _CLASS='highlighted'), _HREF=URL('admin','default','design', args=['LinguaLeoWordsAdder']))
+    #menu = [{}]
+    response.menu = [adminbutton,lingualeobutton]
+    response.logo = A('LinguaLeo Words Adder', _HREF=URL('index'), _CLASS='brand')
+
 
 def gettranslations(words):
     translations = []
