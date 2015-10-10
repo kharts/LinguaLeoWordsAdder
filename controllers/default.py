@@ -69,7 +69,9 @@ def index():
         redirect(URL("login"))
     prepare_header()
     textarea = TEXTAREA(_name='textarea')
-    okbutton = INPUT(_VALUE='Get translations', _TYPE='submit')
+    okbutton = INPUT(_VALUE='Get translations',
+                     _TYPE='submit',
+                     _ID='get_translations')
     form = FORM("Insert words:", textarea, okbutton)
     words = []
     translations = []

@@ -37,3 +37,10 @@
         </td>
     </tr>
 </table>
+
+<script type="text/javascript" src={{=URL('static','js/shortcut.js')}}></script>
+<script>
+    shortcut.add("ctrl+enter", function() {
+        document.getElementById("get_translations").click();
+    });
+</script>
